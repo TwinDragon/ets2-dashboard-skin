@@ -41,6 +41,13 @@
 			&.valid {
 				border-left: none;
 			}
+			
+			&[disabled="disabled"] {
+				background: $cBlackTransparentHigh !important;
+				color: $cWhiteGray !important;
+				border-color: $cWhiteGray !important;
+				cursor: not-allowed;
+			}
 		}
 		
 		&.processing, &.processing > .value {

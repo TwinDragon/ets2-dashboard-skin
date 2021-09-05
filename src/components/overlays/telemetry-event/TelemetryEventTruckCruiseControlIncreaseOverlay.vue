@@ -12,19 +12,13 @@
 
 <script>
 import TelemetryEventBaseOverlay  from '@/components/overlays/telemetry-event/TelemetryEventBaseOverlay';
-import eventsText                 from '@/data/events.json';
 import TelemetryEventOverlayMixin from '@/mixins/TelemetryEventOverlayMixin';
 
 export default {
   name:       'TelemetryEventTruckCruiseControlIncreaseOverlay',
-  mixins:     [ TelemetryEventOverlayMixin ],
   components: {
     TelemetryEventBaseOverlay
   },
-  methods:    {
-    eventsText() {
-      return eventsText;
-    }
-  }
+  mixins:     [ TelemetryEventOverlayMixin ]
 };
 </script>

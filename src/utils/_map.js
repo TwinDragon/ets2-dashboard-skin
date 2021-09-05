@@ -36,6 +36,10 @@ let d = {
 		base:   '',
 		tiles:  'Tiles/{z}/{x}/{y}.png',
 		config: 'TileMapInfo.json'
+	},
+	lastPos: {
+		x: null,
+		y: null
 	}
 };
 
@@ -47,25 +51,36 @@ const ZOOM_DEFAULT = 8;
  * TODO: Add verification for the min map version and the min map version allowed by the dash
  */
 
-const initConfig = ( game ) => {
-	const type               = store.getters[ 'config/get' ]( 'maps_map_type' );
-	const tileRemoteLocation = store.getters[ 'config/get' ]( 'maps_map_tilesRemotePath' );
-	const tilesVersion       = store.getters[ 'config/get' ]( 'maps_map_tilesVersion' );
-	const activeMap          = store.getters[ 'config/get' ]( 'maps_map_activeMap' );
-	const map                = (type === 'vanilla')
+const basePath = ( game ) => {
+	const type                  = store.getters[ 'config/get' ]( 'maps_map_type' );
+	const activeMap             = store.getters[ 'config/get' ]( 'maps_map_activeMap' );
+	const tileRemoteLocation    = store.getters[ 'config/get' ]( 'maps_map_tilesRemotePath' );
+	const tilesVersion          = store.getters[ 'config/get' ]( 'maps_map_tilesVersion' );
+	const tilesRemoteUseCustom  = store.getters[ 'config/enabled' ]( 'maps_map_tilesRemoteUseCustom' );
+	const tilesRemoteCustomPath = store.getters[ 'config/get' ]( 'maps_map_tilesRemoteCustomPath' );
+	const map                   = (type === 'vanilla')
 		? game
 		: activeMap;
-	const basePath           = `${ tileRemoteLocation }/${ map }/${ tilesVersion }/`;
 	
-	Vue.prototype.$pushALog( `Base path: ${ basePath } | Type: ${ type } | Tile version: ${ tilesVersion }`,
+	const path = `${ map }/${ tilesVersion }/`;
+	const host = (tilesRemoteUseCustom)
+		? tilesRemoteCustomPath
+		: tileRemoteLocation;
+	
+	Vue.prototype.$pushALog( `Base path: ${ host }/${ path } | Type: ${ type } | Tile version: ${ tilesVersion }`,
 		history.HTY_ZONE.MAPS_INIT );
 	
-	d.paths.base = basePath;
+	return `${ host }/${ path }`;
+};
+
+const initConfig = ( game ) => {
+	const rotateWithPlayer   = store.getters[ 'config/get' ]( 'maps_elements_rotateWithPlayer' );
+	
+	d.paths.base = basePath( game );
 	
 	return axios
 		.get( d.paths.base + d.paths.config )
 		.then( response => {
-			//console.log( 'config', response.data );
 			d.config = response.data;
 			Vue.prototype.$pushALog( `Map config found`, history.HTY_ZONE.MAPS_INIT );
 			
@@ -73,20 +88,18 @@ const initConfig = ( game ) => {
 			
 			return axios
 				.get( d.paths.base + tilesPath )
-				.then( response => {
+				.then( () => {
 					Vue.prototype.$pushALog( `Tiles OK: ${ d.paths.base + tilesPath }`, history.HTY_ZONE.MAPS_INIT );
-					d.ready = true;
+					d.gBehaviorRotateWithPlayer = rotateWithPlayer;
 					
-				}, err => {
-					console.error( 'Cant get tiles', err );
+				}, () => {
 					Vue.prototype.$pushALog( `Tiles NOT FOUND`, history.HTY_ZONE.MAPS_INIT, history.HTY_LEVEL.ERROR );
-					throw 'Tiles NOT FOUND';
+					throw new Error( 'Cant get tiles - Tiles NOT FOUND' );
 				} );
 			
-		}, err => {
-			console.error( 'Cant get config', err );
+		}, () => {
 			Vue.prototype.$pushALog( `Map config NOT FOUND`, history.HTY_ZONE.MAPS_INIT, history.HTY_LEVEL.ERROR );
-			throw 'Map config NOT FOUND';
+			throw new Error( 'Cant get config - Map config NOT FOUND' );
 		} );
 };
 
@@ -112,18 +125,28 @@ const initMap = () => {
 	
 	
 	// Creating the map.
+	let zoomInWrapper = document.createElement('div');
+	zoomInWrapper.classList.add( 'round' );
+	zoomInWrapper.classList.add( 'px-2' );
+	zoomInWrapper.classList.add( 'py-0' );
 	let zoomInLabel = document.createElement( 'i' );
 	zoomInLabel.classList.add( 'icon-zoom_in' );
+	zoomInWrapper.append(zoomInLabel);
 	
+	let zoomOutWrapper = document.createElement('div');
+	zoomOutWrapper.classList.add( 'round' );
+	zoomOutWrapper.classList.add( 'px-2' );
+	zoomOutWrapper.classList.add( 'py-0' );
 	let zoomOutLabel = document.createElement( 'i' );
 	zoomOutLabel.classList.add( 'icon-zoom_out' );
+	zoomOutWrapper.append(zoomOutLabel);
 	
 	d.map = new Map( {
 		controls: defaultControls( {
 			zoom:        true,
 			zoomOptions: {
-				zoomInLabel:  zoomInLabel,
-				zoomOutLabel: zoomOutLabel,
+				zoomInLabel:  zoomInWrapper,
+				zoomOutLabel: zoomOutWrapper,
 				target:       'ol-zoom-wrapper'
 			},
 			rotate:      false
@@ -145,7 +168,7 @@ const initMap = () => {
 	
 	// Detecting when the user interacts with the map.
 	// https://stackoverflow.com/q/32868671/
-	d.map.getView().on( [ 'change:center', 'change:rotation' ], function ( ev ) {
+	d.map.getView().on( [ 'change:center', 'change:rotation' ], function () {
 		if ( d.gIgnoreViewChangeEvents )
 			return;
 		
@@ -156,7 +179,8 @@ const initMap = () => {
 
 const init = ( game ) => {
 	return initConfig( game )
-		.then( () => initMap() );
+		.then( () => initMap() )
+		.then( () => d.ready = true )
 };
 
 // ----
@@ -203,8 +227,21 @@ const getPlayerLayer = () => {
 
 const updatePlayerPositionAndRotation = ( lon, lat, rot, speed ) => {
 	
-	if ( d.ready === null )
+	if ( d.ready !== true )
 		return;
+	
+	lon = lon.toFixed(3);
+	lat = lat.toFixed(3);
+	rot = rot.toFixed(5);
+	speed = (speed).toFixed( 0 );
+	
+	if( d.lastPos.x === lon || d.lastPos.y === lat )
+		return;
+	
+	d.lastPos = {
+		x: lon,
+		y: lat
+	}
 	
 	let map_coords = gameCoordToPixels( lon, lat );
 	let rad        = rot * Math.PI * 2;
@@ -214,35 +251,23 @@ const updatePlayerPositionAndRotation = ( lon, lat, rot, speed ) => {
 	
 	d.gIgnoreViewChangeEvents = true;
 	if ( d.gBehaviorCenterOnPlayer ) {
-		
 		if ( d.gBehaviorRotateWithPlayer ) {
-			const height           = d.map.getSize()[ 1 ];
-			const max_ahead_amount = height / 3.0 * d.map.getView().getResolution();
-			const amount_ahead     = Math.max( -max_ahead_amount, Math.min( speed * 0.25, max_ahead_amount ) );
-			const ahead_coords     = [
-				map_coords[ 0 ] + Math.sin( -rad ) * amount_ahead,
-				map_coords[ 1 ] + Math.cos( -rad ) * amount_ahead
-			];
-			
-			speed = (speed).toFixed( 0 );
-			
 			//auto-zoom map by speed
 			if ( app.betweenFloat( speed, 15, 35 ) )
 				d.map.getView().setZoom( 9 );
-			
+
 			else if ( app.betweenFloat( speed, 51, 55 ) )
 				d.map.getView().setZoom( 8 );
-			
+
 			else if ( app.betweenFloat( speed, 61, 65 ) )
 				d.map.getView().setZoom( 7 );
-			
+
 			else if ( app.betweenFloat( speed, 81, 88 ) )
 				d.map.getView().setZoom( 6 );
-			
-			
-			d.map.getView().setCenter( ahead_coords );
+
+			d.map.getView().setCenter( map_coords );
 			d.map.getView().setRotation( rad );
-			
+
 		} else {
 			d.map.getView().setCenter( map_coords );
 			d.map.getView().setRotation( 0 );

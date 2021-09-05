@@ -6,8 +6,9 @@
  * Time: 	11:17
  */
 
-import scsSDKData from '@/data/scs_sdk_plugin_parsed_data.json';
-import app        from '@/utils/utils';
+import scsSDKData      from '@/data/scs_sdk_plugin_parsed_data.json';
+import app              from '@/utils/utils';
+import registeredEvents from '@/data/events.json';
 
 export const EVT_UPDATE = 'evt-update';
 
@@ -29,7 +30,8 @@ export const filterInputEvent = function ( event ) {
 	const splicedEvent = eventName.split( '.' );
 	const eventToSkip  = [
 		'truck.cruise-control',
-		'truck.refuel'
+		'truck.refuel',
+		'game.connected'
 	];
 	
 	const rawData    = (app.isOnDevEnvironment)
@@ -37,11 +39,17 @@ export const filterInputEvent = function ( event ) {
 		: event.rawData;
 	let eventSkipped = false;
 	
+	if( Object.hasOwnProperty.apply( eventName, registeredEvents ) )
+		return false;
+	
 	if ( eventToSkip.indexOf( eventName ) !== -1
 		 || (eventName
 			 === 'truck.cruise-control-decrease'
 			 && !rawData[ 'cruise-control-decrease' ].cruiseControl.enabled)
-		 || (eventName === 'navigation.speed-limit' && rawData[ 'speed-limit' ].speed.value === 0)
+		 || (eventName === 'navigation.speed-limit' && (
+			 rawData[ 'speed-limit' ] === undefined
+			|| (rawData[ 'speed-limit' ] !== undefined && rawData[ 'speed-limit' ].speed.value === 0)
+		))
 	)
 		eventSkipped = true;
 	

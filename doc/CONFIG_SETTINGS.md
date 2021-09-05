@@ -19,8 +19,7 @@ You can find common elements, and skin config.
         <td>Refresh rate</td>
         <td>
             <ul>
-                <li>15</li>
-                <li>150</li>
+                <li>100</li>
                 <li>500</li>
                 <li>1000</li>
             </ul>
@@ -665,6 +664,17 @@ You can find common elements, and skin config.
         </td>
         <td>false</td>
     </tr>
+    <tr>
+        <td>jagfx_elements_right_map</td>
+        <td>Display map</td>
+        <td>
+            <ul>
+                <li>true</li>
+                <li>false</li>
+            </ul>
+        </td>
+        <td>false</td>
+    </tr>
 
 </table>
 
@@ -724,15 +734,45 @@ You can find common elements, and skin config.
         <td>true</td>
     </tr>
     <tr>
-        <td>maps_map_tilesLocation</td>
-        <td>Tiles location</td>
+        <td>maps_elements_rotateWithPlayer</td>
+        <td>Map rotation</td>
         <td>
             <ul>
-                <li>remote</li>
-                <li>local</li>
+                <li>true</li>
+                <li>false</li>
             </ul>
         </td>
-        <td>remote</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td><span style="text-decoration: line-through">maps_map_tilesLocation</span><br><i>Deprecated</i></td>
+        <td><span style="text-decoration: line-through">Tiles location</span></td>
+        <td>
+            <ul>
+                <li><span style="text-decoration: line-through">remote</span></li>
+                <li><span style="text-decoration: line-through">local</span></li>
+            </ul>
+        </td>
+        <td><span style="text-decoration: line-through">remote</span></td>
+    </tr>
+    <tr>
+        <td>maps_map_tilesRemoteUseCustom</td>
+        <td>Remote tiles location</td>
+        <td>
+            <ul>
+                <li>https://ets2.jagfx.fr</li>
+                <li>https://raw.githubusercontent.com/TwinDragon/SCS_Map_Tiles/master/</li>
+            </ul>
+        </td>
+        <td>https://ets2.jagfx.fr</td>
+    </tr>
+    <tr>
+        <td>maps_map_tilesRemoteCustomPath</td>
+        <td>Custom tiles location</td>
+        <td>
+            N/A
+        </td>
+        <td>null</td>
     </tr>
     <tr>
         <td>maps_map_type</td>
@@ -778,10 +818,21 @@ You can find common elements, and skin config.
         </td>
         <td>remaining_date</td>
     </tr>
+    <tr>
+        <td>maps_general_debug</td>
+        <td>Debug information</td>
+        <td>
+            <ul>
+                <li>true</li>
+                <li>false</li>
+            </ul>
+        </td>
+        <td>false</td>
+    </tr>
 
 </table>
 
-> Note: When the `maps_map_tilesLocations` is set to `local`, you need to download the tiles collection. See the [MAP](./MAP.md) README.
+> Note: When the `maps_map_tilesRemoteCustomPath` refer to a local server, you need to download the map tiles collection. See the [MAP](./MAP.md) README.
 
 ---
 ↩️ [Home](../README.md)

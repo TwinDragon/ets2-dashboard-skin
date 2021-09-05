@@ -6,6 +6,7 @@
  * Time: 	17:50
  */
 
+import fieldValues from '@/data/config-field-values.json';
 import defaultData from '@/data/ets2-dashboard-skin.config.json';
 import store       from '@/store';
 import axios       from 'axios';
@@ -20,7 +21,7 @@ export const generateEmptyData = ( config, configSkins ) => {
 		} );
 	} );
 	
-	Object.entries( configSkins ).forEach( ( [ key, skin ] ) => {
+	Object.entries( configSkins ).forEach( ( skin ) => {
 		skin.categories.forEach( category => {
 			category.elements.forEach( element => {
 				emptyData[ element.id ] = null;
@@ -120,7 +121,7 @@ export const upload = file => {
 			let reader = new FileReader();
 			reader.readAsText( file, 'UTF-8' );
 			
-			reader.onload = evt => {
+			reader.onload  = evt => {
 				try {
 					const data        = JSON.parse( evt.target.result );
 					const checkResult = uploadChecker( data );
@@ -148,6 +149,14 @@ export const upload = file => {
 	} );
 };
 
+export const getFieldValues = fieldId => {
+	if ( Object.hasOwnProperty.call( fieldValues, fieldId ) )
+		return new Promise( resolve => resolve( fieldValues[ fieldId ] ) );
+	
+	// TODO Use async
+	else return new Promise( resolve => resolve( [] ) );
+};
+
 const uploadChecker = input => {
 	let result = {
 		state: true
@@ -156,7 +165,7 @@ const uploadChecker = input => {
 	Object.entries( defaultData ).forEach( entry => {
 		const key = entry[ 0 ];
 		
-		if ( !input.hasOwnProperty( key ) )
+		if ( !Object.hasOwnProperty.call( input, key ) )
 			result = {
 				state: false,
 				value: key

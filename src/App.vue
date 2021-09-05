@@ -1,11 +1,15 @@
 <template>
-  <main :class="`${telemetry.game ? telemetry.game.game.name : ''}`">
-    <LoadingOverlay />
+  <main :class="`${Object.hasOwnProperty.apply( 'game', telemetry.game ) ? telemetry.game.game.name : ''}`">
+    <LoadingOverlay :display="gameConnected" />
     <HistoryOverlay />
     <Overlay v-if="gameConnected" />
     <TelemetryEventOverlay v-if="gameConnected" />
     <Header />
-    <component v-bind:is="currentSkinComponent()" v-if="gameConnected" v-show="!menuIsDisplayed" />
+    <component
+      :is="currentSkinComponent()"
+      v-if="gameConnected"
+      v-show="!menuIsDisplayed"
+    />
   </main>
 </template>
 
@@ -25,11 +29,12 @@ import HistoryOverlay         from '@/components/overlays/HistoryOverlay';
 import LoadingOverlay         from '@/components/overlays/LoadingOverlay';
 import Overlay                from '@/components/overlays/Overlay';
 import TelemetryEventOverlay  from '@/components/overlays/telemetry-event/TelemetryEventOverlay';
+import TelemetryMixin         from '@/mixins/TelemetryMixin';
 import { history }            from '@/utils/utils';
 import { mapGetters }         from 'vuex';
 
 export default {
-  name:       'app',
+  name:       'App',
   components: {
     TelemetryEventOverlay,
     JAGFxDashboard,
@@ -47,8 +52,15 @@ export default {
     Header,
     LoadingOverlay
   },
-
-  created() {
+  mixins: [TelemetryMixin],
+  computed: {
+    ...mapGetters( {
+      menuIsDisplayed: 'menu/isDisplayed',
+      currentSkin:     'skins/current',
+      getConfig:       'config/get'
+    } )
+  },
+  mounted() {
     this.$pushALog( 'App launched', history.HTY_ZONE.MAIN );
 
     this.$store
@@ -56,7 +68,7 @@ export default {
         .then( () => {
           this.$pushALog( 'Config loaded', history.HTY_ZONE.MAIN );
 
-          const skinToLoad = this.getConfig( 'general_skin_on_load' );
+          const skinToLoad = this.config( 'general_skin_on_load' );
 
           try {
             this.$store.commit( 'skins/setConfigActive', skinToLoad );
@@ -96,39 +108,6 @@ export default {
         return null;
 
       return currentSkin.id + 'Dashboard';
-    }
-  },
-  computed: {
-    ...mapGetters( {
-      menuIsDisplayed: 'menu/isDisplayed',
-      currentSkin:     'skins/current',
-      getConfig:       'config/get'
-    } )
-  },
-  sockets:    {
-    disconnect() {
-      console.log( 'disconnected' );
-    },
-    connect() {
-      console.log( 'connected' );
-      this.$store.commit( 'app/setLaunch', {
-        icon:    '<i class="fas fa-truck"></i>',
-        text:    'Connected to telemetry server',
-        subText: 'Ready to delivering'
-      } );
-      this.$pushALog( 'Connected to telemetry server', history.HTY_ZONE.MAIN );
-
-      setTimeout( () => {
-        this.$store.commit( 'app/setLaunch', {
-          icon:    '<i class="fas fa-truck"></i>',
-          text:    'Waiting game connection',
-          subText: 'Run the game to start your job !'
-        } );
-        this.$pushALog( 'Waiting game connection', history.HTY_ZONE.MAIN );
-      }, 5000 );
-    },
-    update( data ) {
-      this.$updateTelemetry( { ...data } );
     }
   }
 };
