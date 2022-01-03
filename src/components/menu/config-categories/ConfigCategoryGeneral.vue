@@ -1,6 +1,6 @@
 <template>
   <div class="fields mb-4">
-    <h4>General</h4>
+    <h4>{{ $t('General') }}</h4>
 
     <ConfigFieldChoice
       v-bind="{
@@ -11,6 +11,14 @@
         values: fieldValues( 'general_refresh_rate' )
       }"
     />
+    <ConfigFieldInput
+      v-bind="{
+        id: 'general_port',
+        label: 'Port',
+        disabled: false,
+        description: 'Port used by the server',
+      }"
+    />
     <ConfigFieldChoice
       v-bind="{
         id: 'general_skin_on_load',
@@ -18,6 +26,15 @@
         disabled: false,
         description: 'Set the skin loaded when this app was started',
         values: fieldValues( 'general_skin_on_load' )
+      }"
+    />
+    <ConfigFieldChoice
+      v-bind="{
+        id: 'general_skin_locale',
+        label: 'Langue',
+        disabled: false,
+        description: 'Choose your locale used on this app',
+        values: fieldValues( 'general_skin_locale' )
       }"
     />
     <ConfigFieldChoice
@@ -32,7 +49,7 @@
     <ConfigFieldChoice
       v-bind="{
         id: 'general_h-shift-layout',
-        label: 'H-Shift layout',
+        label: 'H-Shifter layout',
         disabled: false,
         description: 'Show the current range of H-Shifter OR the automatic number',
         values: fieldValues( 'general_h-shift-layout' )

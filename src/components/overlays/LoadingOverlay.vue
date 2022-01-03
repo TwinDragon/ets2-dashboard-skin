@@ -21,11 +21,11 @@
               />
             </h1>
             <h1 class="text-center">
-              {{ launching.text }}
+              {{ $t(launching.text) }}
             </h1>
-            <small class="mb-3">{{ launching.subText }}</small>
+            <small class="mb-3">{{ $t(launching.subText) }}</small>
             <b-spinner
-              label="Processing..."
+              :label="$t('Processing')"
               type="grow"
             />
           </div>

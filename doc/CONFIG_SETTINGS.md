@@ -27,6 +27,14 @@ You can find common elements, and skin config.
         <td>15</td>
     </tr>
     <tr>
+        <td>general_port</td>
+        <td>Port</td>
+        <td>
+            N/A
+        </td>
+        <td>3000</td>
+    </tr>
+    <tr>
         <td>general_skin_on_load</td>
         <td>Default skin loaded</td>
         <td>
@@ -46,6 +54,17 @@ You can find common elements, and skin config.
         <td>JAGFx</td>
     </tr>
     <tr>
+        <td>general_skin_locale</td>
+        <td>Langue</td>
+        <td>
+            <ul>
+                <li>fr_FR</li>
+                <li>en_EN</li>
+            </ul>
+        </td>
+        <td>en_EN</td>
+    </tr>
+    <tr>
         <td>general_job_remaining</td>
         <td>Job delivery time</td>
         <td>
@@ -58,7 +77,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>general_h-shift-layout</td>
-        <td>H-Shift layout</td>
+        <td>H-Shifter layout</td>
         <td>
             <ul>
                 <li>h-shifter</li>
@@ -234,7 +253,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>events_truck.cruise-control</td>
-        <td>Cruise control set</td>
+        <td>Cruise control enabled</td>
         <td>
             <ul>
                 <li>true</li>
@@ -267,7 +286,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>events_truck.warning</td>
-        <td>Truck warning</td>
+        <td>Truck warning message</td>
         <td>
             <ul>
                 <li>true</li>
@@ -278,7 +297,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>events_truck.emergency</td>
-        <td>Truck emergency</td>
+        <td>Truck emergency message</td>
         <td>
             <ul>
                 <li>true</li>
@@ -289,7 +308,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>events_truck.electric</td>
-        <td>Truck electric</td>
+        <td>Truck electric message</td>
         <td>
             <ul>
                 <li>true</li>
@@ -300,7 +319,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>events_truck.engine</td>
-        <td>Truck engine</td>
+        <td>Truck engine start</td>
         <td>
             <ul>
                 <li>true</li>
@@ -311,7 +330,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>events_truck.park</td>
-        <td>Truck park</td>
+        <td>Truck parking brake</td>
         <td>
             <ul>
                 <li>true</li>
@@ -468,7 +487,7 @@ You can find common elements, and skin config.
     </tr>
     <tr>
         <td>jagfx_elements_right_brakesTemperature</td>
-        <td>Oil temperature</td>
+        <td>Brakes temperature</td>
         <td>
             <ul>
                 <li>true</li>
@@ -535,6 +554,17 @@ You can find common elements, and skin config.
     <tr>
         <td>jagfx_elements_right_batteryVoltage</td>
         <td>Battery voltage</td>
+        <td>
+            <ul>
+                <li>true</li>
+                <li>false</li>
+            </ul>
+        </td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>jagfx_elements_right_restStop</td>
+        <td>Next rest stop</td>
         <td>
             <ul>
                 <li>true</li>
@@ -643,17 +673,6 @@ You can find common elements, and skin config.
         <td>true</td>
     </tr>
     <tr>
-        <td>jagfx_elements_right_restStop</td>
-        <td>Next rest stop</td>
-        <td>
-            <ul>
-                <li>true</li>
-                <li>false</li>
-            </ul>
-        </td>
-        <td>false</td>
-    </tr>
-    <tr>
         <td>jagfx_elements_mid_bottom_blinker_turn</td>
         <td>Turning indicator</td>
         <td>
@@ -688,6 +707,17 @@ You can find common elements, and skin config.
         <th>Name</th>
         <th>Values</th>
         <th>Default</th>
+    </tr>
+    <tr>
+        <td>maps_general_debug</td>
+        <td>Debug information</td>
+        <td>
+            <ul>
+                <li>true</li>
+                <li>false</li>
+            </ul>
+        </td>
+        <td>false</td>
     </tr>
     <tr>
         <td>maps_elements_eta</td>
@@ -745,34 +775,23 @@ You can find common elements, and skin config.
         <td>true</td>
     </tr>
     <tr>
-        <td><span style="text-decoration: line-through">maps_map_tilesLocation</span><br><i>Deprecated</i></td>
-        <td><span style="text-decoration: line-through">Tiles location</span></td>
+        <td>maps_map_navigationRemaining</td>
+        <td>Navigation ETA</td>
         <td>
             <ul>
-                <li><span style="text-decoration: line-through">remote</span></li>
-                <li><span style="text-decoration: line-through">local</span></li>
+                <li>true</li>
+                <li>false</li>
             </ul>
         </td>
-        <td><span style="text-decoration: line-through">remote</span></td>
+        <td>false</td>
     </tr>
     <tr>
-        <td>maps_map_tilesRemoteUseCustom</td>
-        <td>Remote tiles location</td>
-        <td>
-            <ul>
-                <li>https://ets2.jagfx.fr</li>
-                <li>https://raw.githubusercontent.com/TwinDragon/SCS_Map_Tiles/master/</li>
-            </ul>
-        </td>
-        <td>https://ets2.jagfx.fr</td>
-    </tr>
-    <tr>
-        <td>maps_map_tilesRemoteCustomPath</td>
-        <td>Custom tiles location</td>
+        <td>maps_map_activeMap</td>
+        <td>Active map</td>
         <td>
             N/A
         </td>
-        <td>null</td>
+        <td>null/td>
     </tr>
     <tr>
         <td>maps_map_type</td>
@@ -786,48 +805,34 @@ You can find common elements, and skin config.
         <td>vanilla</td>
     </tr>
     <tr>
-        <td>maps_map_tilesRemotePath</td>
-        <td>Custom remote tiles location</td>
+        <td>maps_map_tilesRemoteCustomPath</td>
+        <td>Custom tiles location</td>
         <td>
             N/A
-        </td>
-        <td>https://ets2.jagfx.fr</td>
-    </tr>
-    <tr>
-        <td>maps_map_activeMap</td>
-        <td>Active map</td>
-        <td>
-            <ul>
-                <li>null</li>
-                <li>ets</li>
-                <li>ats</li>
-                <li>promod</li>
-                <li>promod-ca</li>
-            </ul>
         </td>
         <td>null</td>
     </tr>
     <tr>
-        <td>maps_map_navigationRemaining</td>
-        <td>Navigation ETA</td>
+        <td>maps_map_tilesRemoteUseCustom</td>
+        <td>Remote tiles location</td>
         <td>
             <ul>
-                <li>due_date</li>
-                <li>remaining_date</li>
+                <li>https://ets2.jagfx.fr</li>
+                <li>https://raw.githubusercontent.com/TwinDragon/SCS_Map_Tiles/master/</li>
             </ul>
         </td>
-        <td>remaining_date</td>
-    </tr>
+        <td>https://ets2.jagfx.fr</td>
+    </tr>    
     <tr>
-        <td>maps_general_debug</td>
-        <td>Debug information</td>
+        <td>maps_map_tilesVersion</td>
+        <td>Custom remote tiles location</td>
         <td>
-            <ul>
-                <li>true</li>
-                <li>false</li>
+           <ul>
+                <li>latest</li>
+                <li>v1.40</li>
             </ul>
         </td>
-        <td>false</td>
+        <td>latest</td>
     </tr>
 
 </table>

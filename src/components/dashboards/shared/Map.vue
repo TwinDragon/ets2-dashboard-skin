@@ -19,7 +19,7 @@
             />
           </h1>
           <h1 class="text-center">
-            {{ message.text }}
+            {{ $t(message.text) }}
           </h1>
           <small
             v-if="message.sub.length > 0"
@@ -27,7 +27,7 @@
           >{{ message.sub }}</small>
           <b-spinner
             v-show="message.processing"
-            label="Processing..."
+            :label="$t('Processing')"
             type="grow"
           />
         </div>
@@ -70,7 +70,7 @@
           <span
             v-if="!telemetry.truck.cruiseControl.enabled"
             class="pl-2"
-          >OFF</span>
+          >{{ $t('OFF') }}</span>
           <span
             v-else
             class="pl-2"
@@ -180,7 +180,7 @@
       id="mapInfoOverlay"
     >
       <h5>
-        <span>Map Information</span>
+        <span>{{ $t('Map Information') }}</span>
         <i
           class="fas fa-times"
           @click="onClickMapInfo"
@@ -189,40 +189,40 @@
       <hr>
       <table v-if="mapInfo() !== null && mapInfo().hasOwnProperty( 'game' )">
         <tr>
-          <th>Game</th>
+          <th>{{ $t('Game') }}</th>
           <td>{{ mapInfo().game.name }}</td>
         </tr>
         <tr>
-          <th>Version</th>
+          <th>{{ $t('Version') }}</th>
           <td>{{ mapInfo().game.version }}</td>
         </tr>
         <tr>
-          <th>Date</th>
+          <th>{{ $t('Date') }}</th>
           <td>{{ mapInfo().game.generatedAt }}</td>
         </tr>
         <tr v-if="configEnabled('maps_general_debug')">
-          <th>Pos</th>
+          <th>{{ $t('Pos') }}</th>
           <td>X: {{ telemetry.truck.position.X.toFixed( 3 ) }} | Y: {{ telemetry.truck.position.Y.toFixed( 3 ) }}</td>
         </tr>
         <tr v-if="configEnabled('maps_general_debug')">
-          <th>Ready</th>
+          <th>{{ $t('Ready') }}</th>
           <td>{{ ready }}</td>
         </tr>
         <tr v-if="configEnabled('maps_general_debug')">
-          <th>Last pos</th>
+          <th>{{ $t('Last pos') }}</th>
           <td>{{ m.lastPos }}</td>
         </tr>
         <tr v-if="configEnabled('maps_general_debug')">
-          <th>Map ready</th>
+          <th>{{ $t('Map ready') }}</th>
           <td>{{ m.ready }}</td>
         </tr>
         <tr v-if="configEnabled('maps_general_debug')">
-          <th>Tiles</th>
+          <th>{{ $t('Tiles') }}</th>
           <td>{{ m.paths.base }}</td>
         </tr>
       </table>
       <div v-else>
-        No data available
+        {{ $t('No data available') }}
       </div>
     </div>
     <!-- ./Map info overlay -->
@@ -262,9 +262,10 @@
 </template>
 
 <script>
-import TelemetryMixin   from '@/mixins/TelemetryMixin';
-import { history, map } from '@/utils/utils';
-import { mapGetters }   from 'vuex';
+import testData              from '@/data/scs_sdk_plugin_parsed_data.json';
+import TelemetryMixin        from '@/mixins/TelemetryMixin';
+import { app, history, map } from '@/utils/utils';
+import { mapGetters }        from 'vuex';
 
 export default {
   name:   'Map',
@@ -315,6 +316,13 @@ export default {
        .then( () => {
          this.ready            = true;
          this.rotateWithPlayer = map.d.gBehaviorRotateWithPlayer;
+
+         // --- Dev
+         if ( app.useFakeData )
+           setTimeout( () => {
+             this.$updateTelemetry( testData )
+           }, 1000 );
+         // --- ./Dev
        } )
        .catch( e => {
          this.message.icon       = '<i class="fas fa-times"></i>';

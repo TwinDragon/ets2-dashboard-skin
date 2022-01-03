@@ -6,11 +6,11 @@
  * Time: 	19:43
  */
 
-import store              from '@/store';
-import { mutations }      from '@/store/telemetry.store';
+import store                   from '@/store';
+import { mutations }           from '@/store/telemetry.store';
+import { translate }           from '@/utils/_i18n';
 import { app, event, history } from '@/utils/utils';
-import { io }             from 'socket.io-client';
-import testData from '@/data/scs_sdk_plugin_parsed_data.json';
+import { io }                  from 'socket.io-client';
 
 
 export default {
@@ -28,17 +28,17 @@ export default {
 			
 			if ( theEvent !== false ) {
 				const configName = `events_${ theEvent.eventName }`;
-				const isActive   = store.getters[ 'config/get' ]( configName );
+				const isActive   = store.getters[ 'config/enabled' ]( configName );
 				
 				if ( isActive ) {
 					Vue.prototype.$pushALog( 'New event ' + JSON.stringify( theEvent ), history.HTY_ZONE.MAIN );
-				}
 				
-				store.dispatch( 'event/displayEnEvent', {
-					eventProcessing: true,
-					eventName:       theEvent.eventName,
-					eventRawData:    theEvent.rawData
-				} );
+					store.dispatch( 'event/displayAnEvent', {
+						eventProcessing: true,
+						eventName:       theEvent.eventName,
+						eventRawData:    theEvent.rawData
+					} );
+				}
 			}
 		};
 		
@@ -55,14 +55,11 @@ export default {
 				mutations.setReceivedData( true );
 		}
 		
-		// --- Dev
-		if ( app.useFakeData )
-			setTimeout( () => {
-				updateTelemetry( testData )
-			}, 1000 );
+		Vue.prototype.$updateTelemetry = updateTelemetry;
 		
-		else {
-			const telemetrySocket = io( 'http://' + window.location.hostname + ':3000' );
+		if ( !app.useFakeData ) {
+			const port = store.getters['config/get']('general_port');
+			const telemetrySocket = io( `http://${window.location.hostname}:${port}` );
 			telemetrySocket.on( 'connect', () => {
 				store.commit( 'app/setLaunch', {
 					icon:    '<i class="fas fa-truck"></i>',
@@ -83,6 +80,9 @@ export default {
 				Vue.prototype.$updateEvent( data );
 			} );
 		}
-		// --- ./Dev
+		
+		// ---
+		
+		Vue.prototype.$t = translate;
 	}
 };
